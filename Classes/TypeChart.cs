@@ -125,18 +125,18 @@ namespace PokeHelper.Classes
             // Bug is super effective against Grass, Psychic, and Dark
         { "Bug", new Dictionary<string, double> {
 
-                { "Fire", 0.5 }, { "Fighting", 0.5 }, { "Poison", 0.5 }, { "Flying", 0.5 }, { "Ghost", 0.5 }, { "Dragon", 0.5 }, { "Fairy", 0.5 },
+                { "Fire", 0.5 }, { "Fighting", 0.5 }, { "Poison", 0.5 }, { "Flying", 0.5 }, { "Ghost", 0.5 }, { "Fairy", 0.5 },
                 { "Grass", 2 }, { "Psychic", 2 }, { "Dark", 2 }
 
             }
         },
             // Ghost is not effective against Dark
-            // Ghost is super effective against Psychic, and Rock
+            // Ghost is super effective against Psychic, and Ghost
             // Ghost cannot hit normal
         { "Ghost", new Dictionary<string, double> {
 
                 { "Dark", 0.5 },
-                { "Psychic", 2 }, { "Rock", 2 },
+                { "Psychic", 2 }, { "Ghost", 2 },
                 { "Normal", 0 }
 
             }

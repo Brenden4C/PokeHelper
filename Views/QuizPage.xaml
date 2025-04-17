@@ -5,84 +5,260 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PokeHelper.Views"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="1080" d:DesignWidth="1920"
       Title="QuizPage">
 
-    <Grid Background="#FFF2F2F2">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Images/PokeBackground.png" 
+                        Stretch="UniformToFill"/>
+        </Grid.Background>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
 
         <Grid.Resources>
             <Style x:Key="RoundedButtonStyle" TargetType="Button">
+                <Setter Property="FontSize" Value="25"/>
+                <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderThickness" Value="3"/>
+                <Setter Property="BorderBrush" Value="White"/>
+
+                <!-- Allow hover transform -->
+                <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    </Setter.Value>
+                </Setter>
+
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}"
-                            CornerRadius="12"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}">
+                            <Border x:Name="ButtonBorder"
+                        CornerRadius="20"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        BorderBrush="{TemplateBinding BorderBrush}">
+                                <!-- Gradient Background with bound top color -->
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="{Binding Background.(SolidColorBrush.Color), RelativeSource={RelativeSource TemplatedParent}}" Offset="0"/>
+                                        <GradientStop Color="#333333" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+
                                 <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"/>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                <Setter Property="Padding" Value="10,5"/>
-                <Setter Property="Foreground" Value="White"/>
+
+                <!-- Hover: Grow to 105% -->
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleX)"
+                                         To="1.05" Duration="0:0:0.1"/>
+                                    <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleY)"
+                                         To="1.05" Duration="0:0:0.1"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                        <Trigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleX)"
+                                         To="1" Duration="0:0:0.1"/>
+                                    <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleY)"
+                                         To="1" Duration="0:0:0.1"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.ExitActions>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+
+
+            <Style x:Key="QuitButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="#FF4CAF50" />
+                <!-- Green Background -->
+                <Setter Property="Foreground" Value="White" />
+                <!-- White text -->
+                <Setter Property="FontSize" Value="18" />
+                <!-- Larger font size -->
+                <Setter Property="FontWeight" Value="Bold" />
+                <!-- Bold text -->
+                <Setter Property="BorderBrush" Value="DarkGreen" />
+                <!-- Dark green border -->
+                <Setter Property="BorderThickness" Value="2" />
+                <!-- Border thickness -->
+                <Setter Property="Padding" Value="15,10" />
+                <!-- Padding inside button -->
+                <Setter Property="Margin" Value="10" />
+                <!-- Margin for spacing around the button -->
+                <Setter Property="Width" Value="250" />
+                <!-- Fixed width for consistency -->
+                <Setter Property="Height" Value="75" />
+                <!-- Fixed height for consistency -->
+
+                <!-- Template of the Button with a Border that has a CornerRadius -->
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="20">
+                                <!-- Rounded corners -->
+                                <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <!-- Hover effect -->
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#81C784" />
+                        <!-- Lighter green on hover -->
+                        <Setter Property="BorderBrush" Value="#66BB6A" />
+                        <!-- Lighter border on hover -->
+                    </Trigger>
+                </Style.Triggers>
             </Style>
         </Grid.Resources>
 
-        <!-- Get Random Pokémon Button -->
-        <Button Content="Get Random Pokémon"
-            Click="GetRandomPokemonButton_Click"
-            Width="200"
-            Height="40"
-            Margin="10"
-            Grid.Row="0"/>
+        <!-- Quit Button in the top-left corner -->
+        <Button Content="Quit Game" Width="200" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Click="QuitButton_Click" Margin="10" Style="{StaticResource QuitButtonStyle}"/>
 
-        <!-- Container for displaying Pokémon sprite, name, and types -->
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Image x:Name="PokemonSpriteImage" Width="100" Height="100" HorizontalAlignment="Center" Margin="10"/>
-            <TextBlock x:Name="PokemonNameTextBlock" FontSize="18" HorizontalAlignment="Center" Margin="5"/>
-            <StackPanel Grid.Row="2" x:Name="TypeImagePanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-        </StackPanel>
+        <!-- Pokémon Image and Name Section -->
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
-            <!-- Move Name -->
-            <TextBlock x:Name="MoveNameTextBlock" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" />
+            <!-- Pokémon Image -->
+            <Image x:Name="PokemonSpriteImage" Width="Auto" Height="550" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Row="0"/>
 
-            <!-- Move Type Image -->
-            <Image x:Name="MoveTypeImage" Width="100" Height="100" HorizontalAlignment="Center" Margin="5"/>
-        </StackPanel>
+            <!-- Pokémon Name -->
+            <TextBlock x:Name="PokemonNameTextBlock" 
+                FontSize="64" 
+                FontWeight="Bold"
+                Foreground="White"
+                HorizontalAlignment="Center"
+                Margin="0,10"
+                VerticalAlignment="Bottom"
+                TextAlignment="Center">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="3"/>
+                </TextBlock.Effect>
+            </TextBlock>
+
+        </Grid>
+
+        <!-- Pokémon Types Background -->
+        <Border BorderBrush="Black" BorderThickness="2" Background="#A0A0A0" Width="200" Height="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+                <!-- Display Pokémon Types Here -->
+                <TextBlock x:Name="PokemonTypesTextBlock" Text="Fire, Water" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Move Background Panel -->
+        <Border x:Name="MoveInfoBorder"
+        Grid.Row="1"
+        BorderBrush="White"
+        BorderThickness="4"
+        CornerRadius="15"
+        Width="395"
+        Height="280"
+        VerticalAlignment="Bottom"
+        HorizontalAlignment="Left"
+        Margin="10"
+        Grid.RowSpan="2">
+
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#E0E0E0" Offset="0"/>
+                    <GradientStop Color="#B0B0B0" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <StackPanel>
+                <!-- Move Name and Type -->
+                <TextBlock x:Name="MoveNameTextBlock" 
+                   Text="Move Name" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top" 
+                   FontSize="32" 
+                   FontWeight="Bold" 
+                   Margin="0,10,0,0"/>
+
+                <TextBlock x:Name="MoveTypeTextBlock" 
+                   Text="Move Type" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top" 
+                   FontSize="28" 
+                   Margin="0,5,0,0"/>
+
+                <!-- PP Display -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,10,0,10">
+                    <Border BorderBrush="Black" BorderThickness="1" Width="60" Height="45" VerticalAlignment="Center">
+                        <TextBlock Text="PP" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" />
+                    </Border>
+                    <TextBlock Name="PPTextBlock" Text="15/15" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="23" Margin="5,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
 
         <!-- Container for holding the Effectiveness response buttons-->
-        <StackPanel Grid.Row="3" Orientation="Vertical" Margin="20" HorizontalAlignment="Center">
-            <TextBlock Text="Select Effectiveness:" FontSize="18" Margin="0,10" HorizontalAlignment="Center"/>
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,0,10,10" HorizontalAlignment="Right" Width="1460" VerticalAlignment="Bottom" Height="280">
+            <TextBlock Text="Select Effectiveness:"
+                FontSize="48"
+                FontWeight="Bold"
+                Foreground="White"
+                HorizontalAlignment="Center"
+                Margin="0,10"
+                TextAlignment="Center">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="3"/>
+                </TextBlock.Effect>
+            </TextBlock>
 
             <WrapPanel HorizontalAlignment="Center" Margin="0,5">
-                
-                <Button Content="0x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+
+                <Button Content="0x" Width="215" Height="130" Margin="5" Click="EffectivenessButton_Click"
             Background="Black" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
-                <Button Content=".25x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+                <Button Content=".25x" Width="215" Height="130" Margin="5" Click="EffectivenessButton_Click"
             Background="#8B0000" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
-                <Button Content=".5x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+                <Button Content=".5x" Width="215" Height="130" Margin="5" Click="EffectivenessButton_Click"
             Background="Red" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
-                <Button Content="1x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+                <Button Content="1x" Width="215" Height="130" Margin="5" Click="EffectivenessButton_Click"
             Background="Gray" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
-                <Button Content="2x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+                <Button Content="2x" Width="215" Height="130" Margin="5" Click="EffectivenessButton_Click"
             Background="#90EE90" Foreground="Black" Style="{StaticResource RoundedButtonStyle}"/>
 
-                <Button Content="4x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+                <Button Content="4x" Width="215" Height="130" Margin="5" Click="EffectivenessButton_Click"
             Background="DarkGreen" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
-                
+
             </WrapPanel>
         </StackPanel>
 

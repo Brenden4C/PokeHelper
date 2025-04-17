@@ -24,6 +24,7 @@
     <None Remove="Images\ice.png" />
     <None Remove="Images\normal.png" />
     <None Remove="Images\poison.png" />
+    <None Remove="Images\PokeBackground.png" />
     <None Remove="Images\psychic.png" />
     <None Remove="Images\rock.png" />
     <None Remove="Images\steel.png" />
@@ -78,6 +79,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\poison.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\PokeBackground.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\psychic.png">

@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using PokeHelper.Views;
 
 namespace PokeHelper;
 
@@ -10,4 +11,5 @@ namespace PokeHelper;
 public partial class App : Application
 {
 }
+
 
