@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PokeHelper.Classes;
 
 namespace PokeHelper.Views {
     public partial class HomePage : Page {
@@ -19,7 +20,7 @@ namespace PokeHelper.Views {
             InitializeComponent();
         }
 
-        private void StartQuiz_Click(object sender, RoutedEventArgs e) {
+        private void StartQuiz_Click(object sender, RoutedEventArgs e) { 
             NavigationService.Navigate(new QuizPage());
         }
     }

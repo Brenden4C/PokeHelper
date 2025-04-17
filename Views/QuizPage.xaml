@@ -9,6 +9,75 @@
       Title="QuizPage">
 
     <Grid Background="#FFF2F2F2">
-        <TextBlock Text="Quiz Coming Soon!" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.Resources>
+            <Style x:Key="RoundedButtonStyle" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                            CornerRadius="12"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+        </Grid.Resources>
+
+        <!-- Get Random Pokémon Button -->
+        <Button Content="Get Random Pokémon"
+            Click="GetRandomPokemonButton_Click"
+            Width="200"
+            Height="40"
+            Margin="10"
+            Grid.Row="0"/>
+
+        <!-- Container for displaying Pokémon sprite, name, and types -->
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Image x:Name="PokemonSpriteImage" Width="100" Height="100" HorizontalAlignment="Center" Margin="10"/>
+            <TextBlock x:Name="PokemonNameTextBlock" FontSize="18" HorizontalAlignment="Center" Margin="5"/>
+            <StackPanel Grid.Row="2" x:Name="TypeImagePanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+        </StackPanel>
+
+        <!-- Container for holding the Effectiveness response buttons-->
+        <StackPanel Grid.Row="3" Orientation="Vertical" Margin="20" HorizontalAlignment="Center">
+            <TextBlock Text="Select Effectiveness:" FontSize="18" Margin="0,10" HorizontalAlignment="Center"/>
+
+            <WrapPanel HorizontalAlignment="Center" Margin="0,5">
+                
+                <Button Content="0x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+            Background="Black" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+
+                <Button Content="1/4x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+            Background="#8B0000" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+
+                <Button Content="1/2x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+            Background="Red" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+
+                <Button Content="1x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+            Background="Gray" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+
+                <Button Content="2x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+            Background="#90EE90" Foreground="Black" Style="{StaticResource RoundedButtonStyle}"/>
+
+                <Button Content="4x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+            Background="DarkGreen" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                
+            </WrapPanel>
+        </StackPanel>
+
+
     </Grid>
 </Page>
