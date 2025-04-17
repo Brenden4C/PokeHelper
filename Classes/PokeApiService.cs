@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
@@ -36,26 +37,63 @@ namespace PokeHelper.Classes
             return types;
         }
 
-        //Returns a random Pokemon as a string
-        public static async Task<string> GenerateRandomPokemon()
+        public static async Task<PokemonInfo> GetRandomPokemonAsync()
         {
-            // Define the base URL for fetching Pokémon data
-            string url = "https://pokeapi.co/api/v2/pokemon?limit=1000"; // Limits to 1000 Pokémon
+            Random rand = new Random();
+            int randomPokemonId = rand.Next(1, 899); // Pokémon IDs range from 1 to 898
 
-            // Make a request to the PokéAPI to fetch a list of Pokémon
-            var client = new HttpClient();
-            var response = await client.GetStringAsync(url);
+            string url = $"https://pokeapi.co/api/v2/pokemon/{randomPokemonId}/";
+            string response = await client.GetStringAsync(url);
 
-            // Deserialize the response into a list of Pokémon
             var json = JObject.Parse(response);
-            var results = json["results"].ToObject<List<JObject>>();
 
-            // Generate a random index to select a Pokémon from the list
-            Random random = new Random();
-            int randomIndex = random.Next(results.Count);
+            string name = json["name"].ToString();
+            string spriteUrl = json["sprites"]["front_default"]?.ToString() ?? "";
 
-            // Return the name of the randomly selected Pokémon
-            return results[randomIndex]["name"].ToString();
+            List<string> types = json["types"]
+                .Select(t => t["type"]["name"].ToString())
+                .ToList();
+
+            return new PokemonInfo
+            {
+                Name = name,
+                SpriteUrl = spriteUrl,
+                Types = types
+            };
         }
+
+        // Will return the name of a move as well as the moves type.
+        // Will only find and return damaging moves. (status moves don't work)
+        public static async Task<(string moveName, string moveType)?> GetRandomDamagingMoveAsync()
+        {
+            Random rand = new Random();
+
+            while (true)
+            {
+                int moveId = rand.Next(1, 919); // Pokémon move IDs
+
+                string url = $"https://pokeapi.co/api/v2/move/{moveId}/";
+
+                try
+                {
+                    string response = await client.GetStringAsync(url);
+                    using JsonDocument doc = JsonDocument.Parse(response);
+
+                    string name = doc.RootElement.GetProperty("name").GetString();
+                    string type = doc.RootElement.GetProperty("type").GetProperty("name").GetString();
+                    string damageClass = doc.RootElement.GetProperty("damage_class").GetProperty("name").GetString();
+
+                    if (damageClass == "physical" || damageClass == "special")
+                    {
+                        return (name, type);
+                    }
+                }
+                catch
+                {
+                    // If there's a network or parsing error, just loop again
+                }
+            }
+        }
+
     }
 }

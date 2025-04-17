@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -10,6 +11,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -26,6 +28,9 @@ namespace PokeHelper.Views
 
 
         private static readonly HttpClient HttpClient = new HttpClient();
+        private double correctEffectiveness;  // Will store the correct effectiveness value
+        private string[] defenseTypes = Array.Empty<string>();
+        private string attackType;
 
 
         public QuizPage() {
@@ -36,39 +41,96 @@ namespace PokeHelper.Views
         {
             if (sender is Button button)
             {
-                string effectiveness = button.Content.ToString();
-                MessageBox.Show($"You selected: {effectiveness}");
+                // Get the user’s selected effectiveness (you can get this from the button text or value)
+                button = sender as Button;
+                double selectedEffectiveness = double.Parse(button.Content.ToString().Replace("x", ""));
 
-                // Later you'll compare this to the actual effectiveness and give feedback
+                // Check if the selected effectiveness matches the correct one
+                if (selectedEffectiveness == correctEffectiveness)
+                {
+                    MessageBox.Show("Correct!");
+                    // You can add more logic here, like updating the score or proceeding to the next question
+                    StartNewRound();
+                }
+                else
+                {
+                    MessageBox.Show("Incorrect, try again!");
+                }
+            }
+        }
+
+        private void UpdateCorrectEffectiveness()
+        {
+            // Check if the target has one or two types
+            if (defenseTypes.Length == 1)
+            {
+                // Call the method for one type (mono-type)
+                correctEffectiveness = TypeChart.GetMonoTypeEffectiveness(attackType, defenseTypes[0]);
+            }
+            else if(defenseTypes.Length == 2)
+            {
+                // Call the method for two types (dual-type)
+                correctEffectiveness = TypeChart.GetDualTypeEffectiveness(attackType, defenseTypes[0], defenseTypes[1]);
+            }
+            else
+            {
+                MessageBox.Show("No defensive types?");
             }
         }
 
         private async void GetRandomPokemonButton_Click(object sender, RoutedEventArgs e) {
-            GenerateRandomPokemon();
+            StartNewRound();
         }
 
-        private async void GenerateRandomPokemon() {
-            try {
-                Random rand = new Random();
-                int randomPokemonId = rand.Next(1, 899); // Pokémon IDs range from 1 to 898
+        private async void StartNewRound()
+        {
+            await GenerateRandomPokemon();
+            await GenerateRandomMove();
+            UpdateCorrectEffectiveness();
+        }
 
-                string url = $"https://pokeapi.co/api/v2/pokemon/{randomPokemonId}/";
-                string response = await HttpClient.GetStringAsync(url);
-
-                var pokemon = JsonConvert.DeserializeObject<PokemonResponse>(response);
+        private async Task GenerateRandomPokemon() {
+            try
+            {
+                var pokemon = await PokeApiService.GetRandomPokemonAsync();
 
                 // Display sprite
-                PokemonSpriteImage.Source = new BitmapImage(new Uri(pokemon.sprites.front_default));
+                PokemonSpriteImage.Source = new BitmapImage(new Uri(pokemon.SpriteUrl));
 
                 // Display name (capitalize first letter)
-                PokemonNameTextBlock.Text = char.ToUpper(pokemon.name[0]) + pokemon.name.Substring(1);
+                PokemonNameTextBlock.Text = char.ToUpper(pokemon.Name[0]) + pokemon.Name.Substring(1);
 
-                // Display types
-                //PokemonTypesTextBlock.Text = "Types: " + string.Join(", ", pokemon.types.Select(t => t.type.name));
-                DisplayTypeImages(string.Join(", ", pokemon.types.Select(t => t.type.name)));
+                // Display types (as a comma-separated string)
+                DisplayTypeImages(string.Join(", ", pokemon.Types));
+
+                // Store types in private field
+                defenseTypes = pokemon.Types.ToArray();
+
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Failed to load Pokémon: " + ex.Message);
+            }
+        }
+
+        private async Task GenerateRandomMove()
+        {
+            var move = await PokeApiService.GetRandomDamagingMoveAsync();
+
+            if (move != null)
+            {
+                var (moveName, moveType) = move.Value;
+
+                MoveNameTextBlock.Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(moveName);
+                attackType = moveType;
+                // Display the Image for the Move's Type
+                MessageBox.Show("" + moveType);
+                MoveTypeImage.Source = ImageProcessing.GetTypeImageWithImageSource(moveType); // Using ImageSource version
+
+            }
+            else
+            {
+                MessageBox.Show("Failed to get a valid damaging move.");
             }
         }
 
@@ -86,26 +148,6 @@ namespace PokeHelper.Views
                 TypeImagePanel.Children.Add(typeImage);
             }
         }
-
-
-        public class PokemonResponse {
-            public string name { get; set; }
-            public List<PokemonType> types { get; set; }
-            public PokemonSprites sprites { get; set; }
-        }
-
-        public class PokemonType {
-            public PokemonTypeDetails type { get; set; }
-        }
-
-        public class PokemonTypeDetails {
-            public string name { get; set; }
-        }
-
-        public class PokemonSprites {
-            public string front_default { get; set; }
-        }
-
 
     }
 }

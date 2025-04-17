@@ -51,6 +51,14 @@
             <StackPanel Grid.Row="2" x:Name="TypeImagePanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
         </StackPanel>
 
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
+            <!-- Move Name -->
+            <TextBlock x:Name="MoveNameTextBlock" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" />
+
+            <!-- Move Type Image -->
+            <Image x:Name="MoveTypeImage" Width="100" Height="100" HorizontalAlignment="Center" Margin="5"/>
+        </StackPanel>
+
         <!-- Container for holding the Effectiveness response buttons-->
         <StackPanel Grid.Row="3" Orientation="Vertical" Margin="20" HorizontalAlignment="Center">
             <TextBlock Text="Select Effectiveness:" FontSize="18" Margin="0,10" HorizontalAlignment="Center"/>
@@ -60,10 +68,10 @@
                 <Button Content="0x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
             Background="Black" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
-                <Button Content="1/4x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+                <Button Content=".25x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
             Background="#8B0000" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
-                <Button Content="1/2x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
+                <Button Content=".5x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"
             Background="Red" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
                 <Button Content="1x" Width="80" Height="50" Margin="5" Click="EffectivenessButton_Click"

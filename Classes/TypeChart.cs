@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PokeHelper.Classes
 {
@@ -186,6 +188,10 @@ namespace PokeHelper.Classes
             if (string.IsNullOrEmpty(moveType) || string.IsNullOrEmpty(targetType))
                 return -1;
 
+            // Convert to Title Case or use ToLowerInvariant for consistency
+            moveType = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(moveType.ToLowerInvariant());
+            targetType = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(targetType.ToLowerInvariant());
+
 
             if (typeChart.ContainsKey(moveType) && typeChart[moveType].ContainsKey(targetType)) {
                 return typeChart[moveType][targetType];
@@ -200,6 +206,11 @@ namespace PokeHelper.Classes
             if (string.IsNullOrEmpty(moveType) || string.IsNullOrEmpty(targetType) || string.IsNullOrEmpty(targetType2))
                 return -1;
 
+            moveType = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(moveType.ToLowerInvariant());
+            targetType = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(targetType.ToLowerInvariant());
+            targetType2 = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(targetType2.ToLowerInvariant());
+
+
             double effectiveness = 1;
             if (typeChart.ContainsKey(moveType) && typeChart[moveType].ContainsKey(targetType)) {
 
@@ -210,6 +221,8 @@ namespace PokeHelper.Classes
                 effectiveness *= typeChart[moveType][targetType2];
             }
             return effectiveness; // Default to neutral (1x) if not found
+
+            
         }
     }
 }

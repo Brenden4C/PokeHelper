@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace PokeHelper.Classes
@@ -33,6 +34,12 @@ namespace PokeHelper.Classes
 
             return image;
         }
+
+        public static ImageSource GetTypeImageWithImageSource(string type)
+        {
+            return new BitmapImage(new Uri($"images/{type}.png", UriKind.Relative));
+        }
+
 
     }
 }
