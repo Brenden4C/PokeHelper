@@ -70,7 +70,7 @@ namespace PokeHelper.Classes
         },
             // Fighting is not effective agaisnt Poison, Flying, Psychic, Bug, and Fairy
             // Fighting is super effective against Normal, Ice, Rock, Dark, and Steel
-            // Fighting cannot hit ghost
+            // Fighting cannot hit Ghost
         { "Fighting", new Dictionary<string, double> {
 
                 { "Poison", 0.5 }, { "Flying", 0.5 }, { "Psychic", 0.5 }, { "Bug", 0.5 }, { "Fairy", 0.5 },
@@ -121,12 +121,20 @@ namespace PokeHelper.Classes
 
             }
         },
-            // Bug is not effective against Fire, Fighting, Poison, Flying, Ghost, Dragon, and Fairy
+            // Bug is not effective against Fire, Fighting, Poison, Flying, Ghost, and Fairy
             // Bug is super effective against Grass, Psychic, and Dark
         { "Bug", new Dictionary<string, double> {
 
                 { "Fire", 0.5 }, { "Fighting", 0.5 }, { "Poison", 0.5 }, { "Flying", 0.5 }, { "Ghost", 0.5 }, { "Fairy", 0.5 },
                 { "Grass", 2 }, { "Psychic", 2 }, { "Dark", 2 }
+
+            }
+        },
+            // WRITE COMMENTS HERE
+        { "Rock", new Dictionary<string, double> {
+
+                { "Fighting", 0.5 }, { "Ground", 0.5 }, { "Steel", 0.5 },
+                { "Fire", 2 }, { "Ice", 2 }, { "Flying", 2 }, { "Bug", 2 }
 
             }
         },
