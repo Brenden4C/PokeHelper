@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="PokeHelper.XamlObjects.CustomSlider"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PokeHelper.XamlObjects"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid x:Name="SliderGrid" MouseDown="SliderGrid_MouseDown" MouseMove="SliderGrid_MouseMove" MouseUp="SliderGrid_MouseUp">
+        <!-- Background -->
+        <Rectangle Fill="#333" RadiusX="5" RadiusY="5" Height="10" VerticalAlignment="Center"/>
+
+        <!-- Fill (only this will animate) -->
+        <Rectangle x:Name="MusicFill" Fill="#4CAF50" RadiusX="5" RadiusY="5"
+                   Height="10" HorizontalAlignment="Left" VerticalAlignment="Center" Width="0"/>
+
+        <!-- Thumb (just positioned manually) -->
+        <Rectangle x:Name="Thumb" Width="20" Height="20" Fill="White" RadiusX="10" RadiusY="10"
+                   VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand">
+            <Rectangle.RenderTransform>
+                <TranslateTransform x:Name="ThumbTransform"/>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+    </Grid>
+
+</UserControl>

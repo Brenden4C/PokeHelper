@@ -3,12 +3,13 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:PokeHelper.Views"
+      xmlns:views="clr-namespace:PokeHelper.Views"
+      xmlns:local="clr-namespace:PokeHelper.XamlObjects"
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920"
       Title="QuizPage">
 
-    <Grid>
+    <Grid x:Name="MainContainer">
         <Grid.Background>
             <ImageBrush ImageSource="/Images/PokeBackground.png" 
                         Stretch="UniformToFill"
@@ -21,7 +22,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="ShakeTransform"></TranslateTransform>
+        </Grid.RenderTransform>
+        
         <Grid.Resources>
             <Style x:Key="RoundedButtonStyle" TargetType="Button">
                 <Setter Property="FontSize" Value="25"/>
@@ -143,9 +147,60 @@
             </Style>
         </Grid.Resources>
 
-        <!-- Quit Button in the top-left corner -->
-        <Button Content="Quit Game" Width="200" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top"
-                    Click="QuitButton_Click" Margin="10" Style="{StaticResource QuitButtonStyle}"/>
+        <!-- Menu For Game -->
+        <Button x:Name="MenuButton" 
+                Content="☰"
+                Width="60"
+                Height="60"
+                FontSize="24"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="10"
+                Click="MenuButton_Click"/>
+
+        <Border x:Name="MenuPanel"
+                Background="#DD000000"
+                BorderBrush="White"
+                BorderThickness="3"
+                CornerRadius="10"
+                Width="Auto"
+                Height="300"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="10,70,0,0"
+                Visibility="Collapsed">
+
+            <StackPanel Margin="10">
+                <Button Content="Return to Home" Click="ReturnHomeButton_Click" Margin="0,0,0,10"/>
+                <Button Content="Quit Game" Click="QuitGameButton_Click" Margin="0,0,0,10"/>
+
+                <TextBlock x:Name="MusicVolumeText" Text="Music Volume: 50/100" Foreground="White" Margin="0,10,0,0"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                    <!-- Volume Down Icon -->
+                    <TextBlock Foreground="White" Text="🔈" FontSize="24" VerticalAlignment="Center" Margin="5"/>
+
+                    <!-- Custom Slider -->
+                    <local:CustomSlider x:Name="MusicSlider" Width="150" Height="30"/>
+
+                    <!-- Volume Up Icon -->
+                    <TextBlock Foreground="White" Text="🔊" FontSize="24" VerticalAlignment="Center" Margin="5"/>
+                </StackPanel>
+
+                <TextBlock x:Name="SfxVolumeText" Text="SFX Volume: 50/100" Foreground="White" Margin="0,10,0,0"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                    <!-- Volume Down Icon -->
+                    <TextBlock Foreground="White" Text="🔈" FontSize="24" VerticalAlignment="Center" Margin="5"/>
+
+                    <!-- Custom Slider -->
+                    <local:CustomSlider x:Name="SfxSlider" Width="150" Height="30"/>
+
+                    <!-- Volume Up Icon -->
+                    <TextBlock Foreground="White" Text="🔊" FontSize="24" VerticalAlignment="Center" Margin="5"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+
 
         <!-- Pokémon Image and Name Section -->
         <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="200, 100">
@@ -157,7 +212,7 @@
 
             <!-- Pokémon Image -->
             <Image x:Name="PokemonSpriteImage" Width="Auto" Height="550" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Column="1" 
-                   RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True"/>
+                   RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" Margin="100, 0, 100, 0"/>
 
             <!-- Pokémon Info Box (left center) -->
             <Border             
@@ -201,16 +256,16 @@
 
         <!-- Move Background Panel -->
         <Border x:Name="MoveInfoBorder"
-            Grid.Row="1"
-            BorderBrush="White"
-            BorderThickness="4"
-            CornerRadius="15"
-            Width="395"
-            Height="280"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Right"
-            Margin="10"
-            Grid.RowSpan="2">
+                Grid.Row="1"
+                BorderBrush="White"
+                BorderThickness="4"
+                CornerRadius="15"
+                Width="395"
+                Height="280"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="10"
+                Grid.RowSpan="2">
 
             
             
@@ -250,7 +305,13 @@
 
 
         <!-- Container for holding the Effectiveness response buttons-->
-        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="10" HorizontalAlignment="Left" Width="1500" VerticalAlignment="Bottom" Height="280">
+        <StackPanel Grid.Row="1" 
+                    Orientation="Vertical" 
+                    Margin="10" 
+                    HorizontalAlignment="Left" 
+                    Width="1500" 
+                    VerticalAlignment="Bottom" 
+                    Height="280>
             <TextBlock Text="Select Effectiveness:"
                 FontSize="48"
                 FontWeight="Bold"
@@ -258,30 +319,30 @@
                 HorizontalAlignment="Center"
                 Margin="0,10"
                 TextAlignment="Center">
-                <TextBlock.Effect>
-                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="3"/>
-                </TextBlock.Effect>
+            <TextBlock.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="3"/>
+            </TextBlock.Effect>
             </TextBlock>
 
             <WrapPanel HorizontalAlignment="Center" Margin="0,5">
 
                 <Button Content="0x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-            Background="Black" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                    Background="Black" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
                 <Button Content=".25x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-            Background="#8B0000" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                    Background="#8B0000" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
                 <Button Content=".5x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-            Background="Red" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                    Background="Red" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
                 <Button Content="1x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-            Background="Gray" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                    Background="Gray" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
                 <Button Content="2x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-            Background="#90EE90" Foreground="Black" Style="{StaticResource RoundedButtonStyle}"/>
+                    Background="#90EE90" Foreground="Black" Style="{StaticResource RoundedButtonStyle}"/>
 
                 <Button Content="4x" Width="215" Height="130" Margin="5" Click="EffectivenessButton_Click"
-            Background="DarkGreen" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                    Background="DarkGreen" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
 
             </WrapPanel>
         </StackPanel>

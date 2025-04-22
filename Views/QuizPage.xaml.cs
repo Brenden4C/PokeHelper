@@ -1,9 +1,13 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using Newtonsoft.Json.Linq;
 using PokeHelper.Classes;
 
 
@@ -22,16 +26,31 @@ namespace PokeHelper.Views
         private string attackType = "";
 
 
+
         public QuizPage()
         {
             InitializeComponent();
             StartNewRound();
+
+            MusicSlider.ValueChanged += OnMusicValueChanged;
+            SfxSlider.ValueChanged += OnSfxValueChanged;
         }
 
-        private void QuitButton_Click(object sender, RoutedEventArgs e)
+        private void QuitGameButton_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
+
+        private void ReturnHomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Implement returning to home screen.
+        }
+
+        private void MenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            MenuPanel.Visibility = MenuPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
 
         private void EffectivenessButton_Click(object sender, RoutedEventArgs e)
         {
@@ -50,7 +69,8 @@ namespace PokeHelper.Views
                 }
                 else
                 {
-                    MessageBox.Show("Incorrect, try again!");
+                    //MessageBox.Show("Incorrect, try again!");
+                    Shake();
                 }
             }
         }
@@ -196,6 +216,21 @@ namespace PokeHelper.Views
             DefenderTypesTextBlock.Foreground = textColor;
         }
 
+        private async void Shake()
+        {
+            var transform = ShakeTransform;
+            int shakeCount = 10;
+            double amplitude = 5;
+
+            for (int i = 0; i < shakeCount; i++)
+            {
+                double offset = (i % 2 == 0 ? amplitude : -amplitude);
+                transform.X = offset;
+                await Task.Delay(30);
+            }
+
+            transform.X = 0; // Reset position
+        }
 
 
         private void SetMoveTypeStyle(string moveType)
@@ -420,6 +455,30 @@ namespace PokeHelper.Views
                     break;
             }
         }
+
+        /*
+         * =========================================================
+         *  Methods for Custom Volume Sliders
+         * =========================================================
+         */
+
+        private void OnMusicValueChanged( double newValue )
+        {
+            MusicVolumeText.Text = "Music Volume: " + (int)newValue + "/100";
+        }
+
+        private void OnSfxValueChanged( double newValue )
+        {
+            SfxVolumeText.Text = "SFX Volume: " + (int)newValue + "/100";
+        }
+
+
+        
+
+
+
+
+
 
     }
 }
