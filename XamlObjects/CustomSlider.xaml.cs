@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,7 +17,6 @@ namespace PokeHelper.XamlObjects
         public CustomSlider()
         {
             InitializeComponent();
-            UpdateSlider( .5 );
         }
 
         private void SliderGrid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -73,6 +73,11 @@ namespace PokeHelper.XamlObjects
             // Raise the ValueChanged event to notify external listeners (e.g., QuizPage)
             double valuePercentage = clampedValue * 100; // Convert the value to a percentage (0 - 100)
             ValueChanged?.Invoke(valuePercentage);
+        }
+
+        public void InitializeSlider(Object sender, RoutedEventArgs e)
+        {
+            UpdateSlider(.5);
         }
 
 

@@ -31,6 +31,7 @@ namespace PokeHelper.Views
         {
             InitializeComponent();
             StartNewRound();
+            StartBackgroundMusic();
 
             MusicSlider.ValueChanged += OnMusicValueChanged;
             SfxSlider.ValueChanged += OnSfxValueChanged;
@@ -458,13 +459,21 @@ namespace PokeHelper.Views
 
         /*
          * =========================================================
-         *  Methods for Custom Volume Sliders
+         *  Methods for Music & Menu UI Elements
          * =========================================================
          */
+
+        private void StartBackgroundMusic()
+        {
+            MusicManager.SetVolume(50);
+            string musicFileName = "Lake Verity Music (NO Copyright).mp3";
+            ((MainWindow)Application.Current.MainWindow).PlayMusic(musicFileName);
+        }
 
         private void OnMusicValueChanged( double newValue )
         {
             MusicVolumeText.Text = "Music Volume: " + (int)newValue + "/100";
+            MusicManager.SetVolume(newValue);
         }
 
         private void OnSfxValueChanged( double newValue )
@@ -472,8 +481,18 @@ namespace PokeHelper.Views
             SfxVolumeText.Text = "SFX Volume: " + (int)newValue + "/100";
         }
 
+        private void StatsCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            StatisticsElementControl.Visibility = Visibility.Visible;
+        }
 
-        
+        private void StatsCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            StatisticsElementControl.Visibility = Visibility.Collapsed;
+        }
+
+
+
 
 
 

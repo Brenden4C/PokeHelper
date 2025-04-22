@@ -16,7 +16,7 @@
 
         <!-- Thumb (just positioned manually) -->
         <Rectangle x:Name="Thumb" Width="20" Height="20" Fill="White" RadiusX="10" RadiusY="10"
-                   VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand">
+                   VerticalAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" Loaded="InitializeSlider">
             <Rectangle.RenderTransform>
                 <TranslateTransform x:Name="ThumbTransform"/>
             </Rectangle.RenderTransform>

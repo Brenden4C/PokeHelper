@@ -27,12 +27,14 @@
         </Grid.RenderTransform>
         
         <Grid.Resources>
+            <SineEase x:Key="SmoothEasing" EasingMode="EaseInOut"/>
+            
             <Style x:Key="RoundedButtonStyle" TargetType="Button">
-                <Setter Property="FontSize" Value="25"/>
+                <Setter Property="FontSize" Value="60"/>
                 <Setter Property="Padding" Value="10,5"/>
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="BorderThickness" Value="3"/>
-                <Setter Property="BorderBrush" Value="White"/>
+                <Setter Property="BorderBrush" Value="#1c1c1b"/>
 
                 <!-- Allow hover transform -->
                 <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
@@ -45,21 +47,34 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="ButtonBorder"
-                                CornerRadius="20"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                BorderBrush="{TemplateBinding BorderBrush}">
-                                <!-- Gradient Background with bound top color -->
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                        <GradientStop Color="{Binding Background.(SolidColorBrush.Color), RelativeSource={RelativeSource TemplatedParent}}" Offset="0"/>
-                                        <GradientStop Color="#333333" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Border.Background>
+                            <!-- Outer Border -->
+                            <Border x:Name="OuterBorder"
+                                    CornerRadius="20"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}">
 
-                                <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"
-                                      RecognizesAccessKey="True"/>
+                                <Border.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="3" Opacity="0.6"/>
+                                </Border.Effect>
+
+                                <!-- Inner Border (acts as inner stroke) -->
+                                <Border CornerRadius="15"
+                                        BorderThickness="2"
+                                        BorderBrush="#5A5A5A"
+                                        Margin="2">
+
+                                    <!-- Gradient Background -->
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="{Binding Background.(SolidColorBrush.Color), RelativeSource={RelativeSource TemplatedParent}}" Offset="0"/>
+                                            <GradientStop Color="#333333" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      RecognizesAccessKey="True"/>
+                                </Border>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
@@ -129,7 +144,12 @@
                             CornerRadius="20">
                                 <!-- Rounded corners -->
                                 <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center" />
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="True">
+                                    <ContentPresenter.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="6" ShadowDepth="5" Opacity="0.8"/>
+                                    </ContentPresenter.Effect>
+                                </ContentPresenter>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
@@ -173,6 +193,12 @@
             <StackPanel Margin="10">
                 <Button Content="Return to Home" Click="ReturnHomeButton_Click" Margin="0,0,0,10"/>
                 <Button Content="Quit Game" Click="QuitGameButton_Click" Margin="0,0,0,10"/>
+                <CheckBox x:Name="StatsCheckBox"
+                          Content="Show Statistics"
+                          Foreground="White"
+                          Margin="0,10,0,0"
+                          Checked="StatsCheckBox_Checked"
+                          Unchecked="StatsCheckBox_Unchecked"/>
 
                 <TextBlock x:Name="MusicVolumeText" Text="Music Volume: 50/100" Foreground="White" Margin="0,10,0,0"/>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
@@ -203,7 +229,7 @@
 
 
         <!-- Pokémon Image and Name Section -->
-        <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="200, 100">
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="200, 100" Panel.ZIndex="0" ClipToBounds="False">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -211,8 +237,30 @@
             </Grid.ColumnDefinitions>
 
             <!-- Pokémon Image -->
-            <Image x:Name="PokemonSpriteImage" Width="Auto" Height="550" VerticalAlignment="Top" HorizontalAlignment="Center" Grid.Column="1" 
-                   RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" Margin="100, 0, 100, 0"/>
+            <Grid Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Panel.ZIndex="0">
+                <Image x:Name="PokemonSpriteImage" Width="Auto" Height="550"
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       SnapsToDevicePixels="True" Margin="100,30,150,0">
+                    <Image.RenderTransform>
+                        <TranslateTransform x:Name="SpriteTransform" Y="0"/>
+                    </Image.RenderTransform>
+                </Image>
+
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                <DoubleAnimation
+                                    Storyboard.TargetName="SpriteTransform"
+                                    Storyboard.TargetProperty="Y"
+                                    From="0" To="-15"
+                                    Duration="0:0:1.2"
+                                    EasingFunction="{StaticResource SmoothEasing}"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Grid.Triggers>
+            </Grid>
 
             <!-- Pokémon Info Box (left center) -->
             <Border             
@@ -224,7 +272,8 @@
                 BorderBrush="White"
                 BorderThickness="5"
                 HorizontalAlignment="Right"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                Panel.ZIndex="1">
 
                 <Border.Background>
                     <LinearGradientBrush x:Name="DefenderGradient" StartPoint="0,0" EndPoint="1,1">
@@ -236,116 +285,120 @@
                 <StackPanel>
                     <TextBlock x:Name="PokemonNameTextBlock" 
                                Text="Pokemon Name Here:"
-                        FontSize="36"
-                        FontWeight="Bold"
-                        Foreground="White"
-                        Margin="0,0,0,5"/>
+                               FontSize="36"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               Margin="0,0,0,5"/>
 
                     <TextBlock x:Name="DefenderTypesTextBlock"
-                        FontSize="24"
-                        Foreground="White"
-                        Margin="0,0,0,5"/>
+                               FontSize="24"
+                               Foreground="White"
+                               Margin="0,0,0,5"/>
 
                     <TextBlock 
-                        FontSize="24"
-                        Foreground="White"/>
+                               FontSize="24"
+                               Foreground="White"/>
                 </StackPanel>
             </Border>
         </Grid>
 
 
-        <!-- Move Background Panel -->
-        <Border x:Name="MoveInfoBorder"
-                Grid.Row="1"
-                BorderBrush="White"
-                BorderThickness="4"
-                CornerRadius="15"
-                Width="395"
-                Height="280"
+        <Border Grid.Row="1"
+                Grid.RowSpan="2"
+                Margin="0"
+                Background="#C0C0C0"
+                BorderBrush="#1c1c1b"
+                BorderThickness="10"
+                HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                Margin="10"
-                Grid.RowSpan="2">
+                Height="300"
+                Panel.ZIndex="5"
+                ClipToBounds="False">
 
-            
-            
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#E0E0E0" Offset="0"/>
-                    <GradientStop Color="#B0B0B0" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
+            <Grid>
+                <!-- Move Panel -->
+                <Border x:Name="MoveInfoBorder"
+                        BorderBrush="#1c1c1b"
+                        BorderThickness="4"
+                        CornerRadius="15"
+                        Width="395"
+                        Height="260"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right"
+                        Margin="10">
 
-            <StackPanel>
-                <!-- Move Name and Type -->
-                <TextBlock x:Name="MoveNameTextBlock" 
-                   Text="Move Name" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Top" 
-                   FontSize="32" 
-                   FontWeight="Bold" 
-                   Margin="0,10,0,0"/>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#E0E0E0" Offset="0"/>
+                            <GradientStop Color="#B0B0B0" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
 
-                <TextBlock x:Name="MoveTypeTextBlock" 
-                   Text="Move Type" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Top" 
-                   FontSize="28" 
-                   Margin="0,5,0,0"/>
+                    <StackPanel>
+                        <TextBlock x:Name="MoveNameTextBlock" 
+                           Text="Move Name" 
+                           HorizontalAlignment="Center" 
+                           FontSize="32" 
+                           FontWeight="Bold" 
+                           Margin="0,10,0,0"/>
 
-                <!-- PP Display -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,10,0,10">
-                    <Border BorderBrush="Black" BorderThickness="1" Width="60" Height="45" VerticalAlignment="Center">
-                        <TextBlock Text="PP" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" />
-                    </Border>
-                    <TextBlock Name="PPTextBlock" Text="15/15" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="23" Margin="5,0,0,0"/>
+                        <TextBlock x:Name="MoveTypeTextBlock" 
+                           Text="Move Type" 
+                           HorizontalAlignment="Center" 
+                           FontSize="28" 
+                           Margin="0,5,0,0"/>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
+                            <Border BorderBrush="Black" BorderThickness="1" Width="60" Height="45">
+                                <TextBlock Text="PP" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" />
+                            </Border>
+                            <TextBlock Name="PPTextBlock" Text="15/15" FontSize="23" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Effectiveness Buttons -->
+                <StackPanel Orientation="Vertical"
+                            Margin="10"
+                            HorizontalAlignment="Left"
+                            Width="1500"
+                            VerticalAlignment="Bottom"
+                            Height="280">
+
+                    <TextBlock Text="Select Effectiveness:"
+                       FontSize="48"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       Margin="0,10"
+                       TextAlignment="Center">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="3"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+
+                    <WrapPanel HorizontalAlignment="Center" Margin="-10, 0, 0, 0">
+                        <Button Content="0x" Width="235" Height="180" Margin="5" Click="EffectivenessButton_Click"
+                        Background="Black" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                        <Button Content="¼x" Width="235" Height="180" Margin="5" Click="EffectivenessButton_Click"
+                        Background="#8B0000" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                        <Button Content="½x" Width="235" Height="180" Margin="5" Click="EffectivenessButton_Click"
+                        Background="Red" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                        <Button Content="1x" Width="235" Height="180" Margin="5" Click="EffectivenessButton_Click"
+                        Background="Gray" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                        <Button Content="2x" Width="235" Height="180" Margin="5" Click="EffectivenessButton_Click"
+                        Background="#90EE90" Foreground="Black" Style="{StaticResource RoundedButtonStyle}"/>
+                        <Button Content="4x" Width="235" Height="180" Margin="5" Click="EffectivenessButton_Click"
+                        Background="DarkGreen" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+                    </WrapPanel>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
 
 
-        <!-- Container for holding the Effectiveness response buttons-->
-        <StackPanel Grid.Row="1" 
-                    Orientation="Vertical" 
-                    Margin="10" 
-                    HorizontalAlignment="Left" 
-                    Width="1500" 
-                    VerticalAlignment="Bottom" 
-                    Height="280>
-            <TextBlock Text="Select Effectiveness:"
-                FontSize="48"
-                FontWeight="Bold"
-                Foreground="White"
-                HorizontalAlignment="Center"
-                Margin="0,10"
-                TextAlignment="Center">
-            <TextBlock.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="3"/>
-            </TextBlock.Effect>
-            </TextBlock>
-
-            <WrapPanel HorizontalAlignment="Center" Margin="0,5">
-
-                <Button Content="0x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-                    Background="Black" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
-
-                <Button Content=".25x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-                    Background="#8B0000" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
-
-                <Button Content=".5x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-                    Background="Red" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
-
-                <Button Content="1x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-                    Background="Gray" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
-
-                <Button Content="2x" Width="225" Height="130" Margin="5" Click="EffectivenessButton_Click"
-                    Background="#90EE90" Foreground="Black" Style="{StaticResource RoundedButtonStyle}"/>
-
-                <Button Content="4x" Width="215" Height="130" Margin="5" Click="EffectivenessButton_Click"
-                    Background="DarkGreen" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
-
-            </WrapPanel>
-        </StackPanel>
+        <local:StatisticsElement x:Name="StatisticsElementControl"
+                         Visibility="Collapsed"
+                         Margin="100"/>
 
 
     </Grid>
